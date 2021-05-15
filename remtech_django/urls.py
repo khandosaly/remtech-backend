@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('object_detection/', include('object_detection.urls')),
+    path('pointillism/', include('pointillism.urls')),
+    path('face_swap/', include('face_swap.urls')),
     path('admin/', admin.site.urls),
 ]

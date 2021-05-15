@@ -1,34 +1,17 @@
 import base64
 
-from django import forms
-from django.core.files.base import ContentFile
-from django.core.files.images import ImageFile
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-import object_detection.opencv as cv
 from django.http import JsonResponse
+
+import object_detection.opencv as cv
 
 
 @csrf_exempt
 def index(request):
     if request.method == "POST":
         if 'object_detection' in request.FILES:
-            file = request.FILES['object_detection']
-            with open(f'{file.name}', 'wb+') as destination:
-                for chunk in file.chunks():
-                    destination.write(chunk)
-            w, h = cv.detect(file.name)
-            with open(f'{file.name}-edited.jpg', "rb") as f:
-                f = base64.b64encode(f.read()).decode('utf-8')
-                ctx = {'image': f, 'w': w, 'h': h}
-                return JsonResponse(ctx, safe=False)
-        else:
-            file = request.FILES['pointillism']
-            with open(f'{file.name}', 'wb+') as destination:
-                for chunk in file.chunks():
-                    destination.write(chunk)
-            w, h = cv.pointillist(file.name)
-            with open(f'{file.name}-edited.jpg', "rb") as f:
-                f = base64.b64encode(f.read()).decode('utf-8')
-                ctx = {'image': f, 'w': w, 'h': h}
-                return JsonResponse(ctx, safe=False)
+            file_django = request.FILES['object_detection']
+            image_pil, w, h = cv.detect(file_django)
+            image_b64 = base64.b64encode(image_pil).decode('utf-8')
+            ctx = {'image': image_b64, 'w': w, 'h': h}
+            return JsonResponse(ctx, safe=False)
