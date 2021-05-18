@@ -40,6 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'login.apps.LoginConfig',
+    'encrypted_fields',
+]
+
+FIELD_ENCRYPTION_KEYS = [
+    "f164ec6bd6fbc4aef5647abc15199da0f9badcc1d2127bde2087ae0d794a9a0b"
 ]
 
 MIDDLEWARE = [
@@ -79,10 +85,16 @@ WSGI_APPLICATION = 'remtech_django.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'geurvpou',
+        'USER': 'geurvpou',
+        'PASSWORD': 'bFtbnxPCXSRVFnBXqVykYu4p39MYFOme',
+        'HOST': 'rogue.db.elephantsql.com',
+        'PORT': '5432',
     }
+
 }
 
 
