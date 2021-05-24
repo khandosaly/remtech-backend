@@ -10,7 +10,7 @@ def index(request):
     if request.method == "POST":
         data = request.body.decode('utf-8')
         data = json.loads(data)
-        if 'email' in data.keys():
+        if 'email' in data.keys() and 'nick' in data.keys() and 'pass' in data.keys():
             if User.objects.filter(nick=data['nick']).exists():
                 ans = {'STATE': 'Username is already in use.'}
             elif User.objects.filter(email=data['email']).exists():
@@ -20,7 +20,7 @@ def index(request):
                 usr.save()
                 ans = {'STATE': 'Success!'}
             return JsonResponse(ans)
-        else:
+        elif 'pass' in data.keys() and 'nick' in data.keys():
             if User.objects.filter(nick=data['nick']).exists():
                 u = User.objects.get(nick=data['nick'])
                 if u.password == data['pass']:
@@ -29,4 +29,10 @@ def index(request):
                     ans = {'STATE': 'Invalid username or password'}
             else:
                 ans = {'STATE': 'Invalid username or password'}
+            return JsonResponse(ans)
+        else:
+            if User.objects.filter(email=data['email']).exists():
+                ans = {'STATE': 'Success!'}
+            else:
+                ans = {'STATE': 'Email not found'}
             return JsonResponse(ans)
