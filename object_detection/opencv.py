@@ -8,7 +8,10 @@ from cvlib.object_detection import draw_bbox
 
 
 # reading by each frame
-def detect(file_django):
+from login.models import User
+
+
+def detect(file_django, username):
     image_bytesio = io.BytesIO(file_django.read())
     image_bytes = image_bytesio.getvalue()
     image_nparray = np.fromstring(image_bytes, np.uint8)
@@ -18,7 +21,12 @@ def detect(file_django):
     width, height, channels = image_np.shape
     image_np_outout_rgb = cv2.cvtColor(image_np_output, cv2.COLOR_BGR2RGB)
     image_output = Image.fromarray(image_np_outout_rgb)
-    return image_to_byte_array(image_output), height, width
+    if username != 'anonym':
+        cv2.imwrite(f'/home/khandosaly/remtech/back/media/{username}_detection.jpg', image_np_output)
+        usr = User.objects.get(nick=username)
+        usr.photo_detect = f'/home/khandosaly/remtech/back/media/{username}_detection.jpg'
+        usr.save()
+    return image_to_byte_array(image_output), height, width, image_np_outout_rgb
 
 
 def image_to_byte_array(image: Image):

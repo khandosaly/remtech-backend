@@ -6,12 +6,13 @@ import progressbar
 import numpy as np
 from PIL import Image
 
+from login.models import User
 from . import color_palette
 from . import utils
 from . import vector_field
 
 
-def pointillist(file_django):
+def pointillist(file_django, username):
     palette_size = 20
     stroke_scale = 0
     gradient_smoothing_radius = 0
@@ -50,7 +51,12 @@ def pointillist(file_django):
             cv2.ellipse(res, (x, y), (length, stroke_scale), angle, 0, 360, color, -1, cv2.LINE_AA)
     img_rgb = cv2.cvtColor(res, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(img_rgb)
-    return image_to_byte_array(img), height, width
+    if username != 'anonym':
+        cv2.imwrite(f'/home/khandosaly/remtech/back/media/{username}_pointillism.jpg', res)
+        usr = User.objects.get(nick=username)
+        usr.photo_pointillism = f'/home/khandosaly/remtech/back/media/{username}_pointillism.jpg'
+        usr.save()
+    return image_to_byte_array(img), height, width, img_rgb
 
 
 def image_to_byte_array(image: Image):
